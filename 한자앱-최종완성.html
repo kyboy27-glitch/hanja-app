@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>한자 플래시카드 준4급</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;font-family:'Noto Sans KR',system-ui,sans-serif;background:#f8f3e8;color:#1a1208;overflow:hidden;position:fixed;width:100%;}
+:root{--gold:#9a7b2e;--gold2:#c4a052;--gold3:#e8c870;--red:#c0392b;--green:#2d7a4a;--gray:#8a7a62;--ink:#1a1208;--card:#fffef8;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);}
+.scr{position:fixed;inset:0;display:flex;flex-direction:column;overflow-y:auto;transition:opacity .2s;background:#f8f3e8;}
+.scr.off{opacity:0;pointer-events:none;}
+
+/* ── TOP BAR ── */
+.tb{display:flex;align-items:center;gap:10px;padding:calc(var(--st) + 10px) 14px 8px;background:rgba(248,243,232,.95);border-bottom:1px solid rgba(154,123,46,.12);flex-shrink:0;position:sticky;top:0;z-index:10;}
+.tb-back{font-size:22px;color:var(--gold);cursor:pointer;padding:2px 6px;border:none;background:none;line-height:1;}
+.tb-info{flex:1;min-width:0;}
+.tb-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tb-sub{font-size:11px;color:var(--gray);margin-top:1px;}
+.tb-cnt{font-size:13px;font-weight:800;color:var(--gold);flex-shrink:0;}
+.pbar{height:3px;background:rgba(154,123,46,.1);flex-shrink:0;}
+.pfill{height:100%;transition:width .4s;background:linear-gradient(90deg,var(--gold),var(--gold3));}
+
+/* ── HOME ── */
+#home{padding:calc(var(--st)+16px) 16px calc(var(--sb)+20px);}
+.hcenter{max-width:420px;margin:0 auto;text-align:center;}
+.badge{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+.htitle{font-size:24px;font-weight:800;font-family:serif;margin-bottom:4px;}
+.htitle span{color:var(--gold);}
+.hsub{font-size:12px;color:var(--gray);margin-bottom:16px;}
+.tabs{display:flex;background:#ede5d0;border-radius:12px;padding:3px;margin-bottom:14px;gap:3px;}
+.tab{flex:1;padding:8px 4px;border:none;border-radius:9px;background:transparent;font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;line-height:1.3;font-family:inherit;}
+.tab.on{background:var(--card);color:var(--gold);font-weight:700;box-shadow:0 2px 8px rgba(100,70,10,.1);}
+.panel{display:none;}.panel.on{display:block;}
+.lv-list,.sec-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.lv-item{background:var(--card);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:11px;border:1.5px solid rgba(154,123,46,.12);cursor:pointer;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(100,70,10,.07);}
+.lv-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(var(--gold),var(--gold2));}
+.lv-item:active{transform:scale(.97);}
+.lv-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;font-family:serif;flex-shrink:0;}
+.lv-name{font-size:13px;font-weight:700;}
+.lv-meta{font-size:11px;color:var(--gray);margin-top:1px;}
+.lv-prog{font-size:12px;font-weight:800;color:var(--green);}
+.lv-prog.none{color:#ccc;}
+.sec-item{background:var(--card);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:10px;border:1.5px solid rgba(154,123,46,.1);cursor:pointer;box-shadow:0 2px 7px rgba(100,70,10,.06);}
+.sec-item:active{transform:scale(.97);}
+.sec-num{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;flex-shrink:0;}
+.sec-info{flex:1;}.sec-title{font-size:13px;font-weight:700;}.sec-range{font-size:11px;color:var(--gray);margin-top:1px;}
+.sec-score{font-size:12px;font-weight:700;}
+.sec-score.good{color:var(--green);}.sec-score.mid{color:var(--gold);}.sec-score.none{color:#ccc;}
+.bigbtn{width:100%;padding:14px;border:none;border-radius:14px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;font-family:inherit;}
+.bigbtn.dark{background:linear-gradient(135deg,#1a1208,#3a2810);color:var(--gold3);box-shadow:0 4px 14px rgba(0,0,0,.22);}
+.bigbtn.purple{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;box-shadow:0 4px 12px rgba(79,70,229,.3);}
+.qz-banner{background:linear-gradient(135deg,#1a1208,#3a2010);border-radius:16px;padding:18px;text-align:center;margin-bottom:12px;}
+.qzb-ico{font-size:32px;margin-bottom:6px;}
+.qzb-title{font-size:17px;font-weight:800;color:var(--gold3);font-family:serif;margin-bottom:4px;}
+.qzb-desc{font-size:11px;color:rgba(255,255,255,.5);line-height:1.5;}
+.my-rank{background:var(--card);border-radius:12px;padding:10px 13px;display:flex;align-items:center;gap:10px;margin-bottom:12px;border:1.5px solid rgba(154,123,46,.14);}
+.mr-lbl{font-size:11px;color:var(--gray);}.mr-rank{font-size:14px;font-weight:800;color:var(--gold);flex:1;}.mr-pct{font-size:12px;font-weight:700;color:var(--green);}
+
+/* ── CARD ── */
+.card-stage{flex:1;display:flex;align-items:center;justify-content:center;padding:12px 16px 8px;perspective:1000px;overflow:hidden;}
+.card-outer{width:100%;max-width:320px;height:min(390px,calc(100vh - 240px));position:relative;cursor:pointer;}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;}
+.card-inner.anim{transition:transform .5s cubic-bezier(.4,0,.2,1);}
+.card-inner.flipped{transform:rotateY(180deg);}
+.face{position:absolute;inset:0;border-radius:24px;-webkit-backface-visibility:hidden;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;}
+.face-front{background:var(--card);border:1.5px solid rgba(154,123,46,.15);box-shadow:0 10px 32px rgba(100,70,10,.15);}
+.face-back{background:var(--ink);transform:rotateY(180deg);box-shadow:0 10px 32px rgba(0,0,0,.35);}
+.cf-badge{position:absolute;top:13px;left:13px;font-size:10px;font-weight:700;color:var(--gold);background:rgba(154,123,46,.1);padding:2px 8px;border-radius:8px;}
+.cf-rad{position:absolute;top:13px;right:13px;font-size:10px;color:var(--gray);background:#ede5d0;padding:2px 8px;border-radius:8px;font-family:serif;}
+.cf-k{font-size:clamp(80px,22vw,108px);font-weight:800;font-family:serif;color:var(--ink);line-height:1;text-shadow:2px 3px 0 rgba(154,123,46,.1);margin-bottom:8px;}
+.cf-hint{font-size:11px;color:var(--gray);text-align:center;max-width:210px;line-height:1.5;}
+.cf-tap{position:absolute;bottom:12px;font-size:10px;color:rgba(154,123,46,.4);}
+.cb-k{font-size:40px;font-weight:800;font-family:serif;color:rgba(255,255,255,.12);line-height:1;margin-bottom:12px;}
+.cb-read{font-size:26px;font-weight:800;font-family:serif;color:var(--gold3);letter-spacing:2px;margin-bottom:3px;}
+.cb-mean{font-size:16px;color:rgba(255,255,255,.6);font-family:serif;margin-bottom:14px;}
+.cb-line{width:28px;height:1px;background:rgba(255,255,255,.12);margin:0 auto 12px;}
+.cb-rad-row{display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+.cb-rl{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1px;}
+.cb-rv{font-size:13px;color:var(--gold2);font-weight:700;font-family:serif;}
+.cb-orig{font-size:11px;color:rgba(255,255,255,.48);line-height:1.7;text-align:center;max-width:240px;}
+.cb-orig em{color:var(--gold3);font-style:normal;font-weight:600;}
+/* 중급 앞면 - 한자 크게 */
+.s2-k{font-size:clamp(90px,27vw,130px);font-weight:800;font-family:serif;color:var(--ink);line-height:1;text-shadow:3px 4px 0 rgba(154,123,46,.1);}
+
+/* ── CARD ACTIONS ── */
+.ca{display:flex;gap:8px;padding:8px 14px calc(var(--sb)+12px);flex-shrink:0;}
+.cabtn{flex:1;padding:13px 7px;border-radius:13px;border:none;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;font-family:inherit;}
+.cabtn:active{transform:scale(.95);}
+.ca-prev{background:rgba(154,123,46,.1);color:var(--gold);flex:0 0 44px;font-size:18px;}
+.ca-again{background:rgba(192,57,43,.1);color:var(--red);}
+.ca-know{background:rgba(45,122,74,.1);color:var(--green);}
+.locked{opacity:.3;pointer-events:none;}
+
+/* ── RESULT ── */
+.result-wrap{padding:18px 16px calc(var(--sb)+28px);overflow-y:auto;flex:1;}
+.ri{max-width:380px;margin:0 auto;text-align:center;}
+.ri-e{font-size:48px;line-height:1;margin-bottom:8px;}
+.ri-t{font-size:21px;font-weight:800;font-family:serif;margin-bottom:4px;}
+.ri-s{font-size:12px;color:var(--gray);margin-bottom:16px;}
+.stats{display:flex;gap:8px;margin-bottom:14px;}
+.stat{flex:1;background:var(--card);border-radius:12px;padding:10px 7px;text-align:center;border:1.5px solid rgba(154,123,46,.08);}
+.stat-n{font-size:20px;font-weight:900;line-height:1;margin-bottom:2px;}
+.stat-l{font-size:10px;color:var(--gray);}
+.cg .stat-n{color:var(--green);}.cr .stat-n{color:var(--red);}.cgo .stat-n{color:var(--gold);}.cpu .stat-n{color:#5b21b6;}
+.w-sec{text-align:left;margin-bottom:14px;}
+.w-ttl{font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;margin-bottom:7px;}
+.w-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.w-chip{background:var(--card);border:1.5px solid rgba(192,57,43,.2);border-radius:11px;padding:7px 10px;text-align:center;}
+.wc-k{font-size:17px;font-weight:800;color:var(--red);font-family:serif;}
+.wc-m{font-size:10px;color:var(--gray);margin-top:1px;}
+.r-btns{display:flex;flex-direction:column;gap:8px;}
+.rbtn{padding:13px;border:none;border-radius:13px;width:100%;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.rbtn:disabled{opacity:.35;cursor:default;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff;}
+.btn-red{background:linear-gradient(135deg,var(--red),#e05050);color:#fff;}
+.btn-pu{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;}
+.btn-outline{background:var(--card);color:var(--ink);border:1.5px solid rgba(154,123,46,.18);}
+
+/* ── QUIZ ── */
+#quiz{overflow:hidden;}
+.qpbar{height:4px;background:rgba(79,70,229,.1);flex-shrink:0;}
+.qpfill{height:100%;background:linear-gradient(90deg,#4f46e5,#7c3aed);transition:width .4s;}
+.sdbar{display:flex;justify-content:center;gap:6px;padding:8px 14px 0;flex-shrink:0;}
+.sd{width:8px;height:8px;border-radius:50%;background:rgba(154,123,46,.15);border:1.5px solid rgba(154,123,46,.18);transition:all .3s;}
+.sd.lit{background:var(--gold3);border-color:var(--gold);box-shadow:0 0 6px rgba(232,200,112,.55);}
+.qq-area{flex-shrink:0;padding:8px 16px 5px;text-align:center;}
+.qq-num{font-size:11px;color:var(--gray);margin-bottom:4px;}
+.qq-k{font-size:clamp(68px,20vw,96px);font-weight:800;font-family:serif;color:var(--ink);line-height:1;text-shadow:2px 3px 0 rgba(154,123,46,.1);margin-bottom:3px;}
+.qq-type{font-size:11px;color:var(--gray);}
+.qchoices{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:6px 12px calc(var(--sb)+12px);overflow:hidden;}
+.qc{background:var(--card);border:2px solid rgba(154,123,46,.12);border-radius:14px;padding:10px 6px;cursor:pointer;font-weight:700;color:var(--ink);box-shadow:0 2px 8px rgba(100,70,10,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;font-family:serif;}
+.qc:active:not(:disabled){transform:scale(.95);}
+.qc-main{font-size:15px;}.qc-sub{font-size:10px;color:var(--gray);font-family:system-ui;font-weight:400;}
+.qc.correct{background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-color:#22c55e;}
+.qc.correct .qc-main,.qc.correct .qc-sub{color:#15803d;}
+.qc.wrong{background:linear-gradient(135deg,#fee2e2,#fecaca);border-color:#ef4444;}
+.qc.wrong .qc-main,.qc.wrong .qc-sub{color:#dc2626;}
+.qc.dim{opacity:.27;}
+.qc:disabled{cursor:default;}
+
+/* ── RANK CARD ── */
+.rank-card{border-radius:20px;padding:22px 16px;text-align:center;margin-bottom:13px;position:relative;overflow:hidden;}
+.rank-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 100% 80% at 50% -10%,rgba(255,255,255,.12),transparent);}
+.rc-bronze{background:linear-gradient(135deg,#92400e,#b45309);}
+.rc-silver{background:linear-gradient(135deg,#374151,#6b7280);}
+.rc-gold{background:linear-gradient(135deg,#78350f,#d97706);}
+.rc-diamond{background:linear-gradient(135deg,#1e1b4b,#4f46e5);}
+.rc-master{background:linear-gradient(135deg,#4a1942,#9333ea);}
+.rk-e{font-size:46px;line-height:1;margin-bottom:8px;position:relative;}
+.rk-b{display:inline-block;background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);font-size:10px;font-weight:700;letter-spacing:2px;padding:3px 12px;border-radius:18px;margin-bottom:7px;position:relative;}
+.rk-n{font-size:22px;font-weight:800;color:#fff;font-family:serif;margin-bottom:2px;position:relative;}
+.rk-d{font-size:12px;color:rgba(255,255,255,.55);position:relative;}
+
+/* ── OVERLAY ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:999;display:flex;align-items:center;justify-content:center;animation:fadein .12s;}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.popup{border-radius:22px;padding:24px 28px;text-align:center;min-width:180px;animation:popin .18s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popin{from{transform:scale(.65);opacity:0}to{transform:scale(1);opacity:1}}
+.popup-l{background:var(--card);box-shadow:0 12px 40px rgba(0,0,0,.2);}
+.popup-d{background:linear-gradient(135deg,#1a1208,#3a2010);border:1.5px solid var(--gold2);box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.pop-i{font-size:40px;line-height:1;margin-bottom:6px;}
+.pop-v{font-size:13px;font-weight:700;margin-bottom:8px;}
+.pop-v.ok{color:#15803d;}.pop-v.ng{color:#dc2626;}
+.pop-k{font-size:32px;font-weight:800;font-family:serif;color:var(--ink);}
+.pop-m{font-size:14px;color:var(--gold);margin-top:2px;font-family:serif;}
+.cheer-m{font-size:20px;font-weight:800;color:var(--gold3);font-family:serif;margin-bottom:3px;}
+.cheer-s{font-size:11px;color:rgba(255,255,255,.5);}
+.rv-banner{background:rgba(192,57,43,.07);border:1px solid rgba(192,57,43,.18);border-radius:10px;padding:8px 13px;margin:6px 14px 0;flex-shrink:0;display:flex;align-items:center;gap:7px;}
+.rv-banner.hide{display:none;}
+.rv-txt{font-size:11px;color:var(--red);font-weight:600;}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home" class="scr">
+<div class="hcenter">
+  <div class="badge">📚 대한검정회 · 준4급 · 150자</div>
+  <div class="htitle">한자 <span>플래시카드</span></div>
+  <p class="hsub">부수 · 유래 · 훈음 · 퀴즈를 한 번에!</p>
+  <div class="tabs">
+    <button class="tab on" onclick="setTab(0)">🌱 초급<br><small style="font-size:10px;opacity:.7">그림카드</small></button>
+    <button class="tab"    onclick="setTab(1)">⚡ 중급<br><small style="font-size:10px;opacity:.7">퀴즈</small></button>
+    <button class="tab"    onclick="setTab(2)">📝 고급<br><small style="font-size:10px;opacity:.7">빈칸맞추기</small></button>
+  </div>
+  <div class="panel on" id="panel0"><div class="lv-list" id="lvList"></div></div>
+  <div class="panel"    id="panel1"><div class="sec-list" id="secList"></div><button class="bigbtn purple" onclick="startQuiz(-1)">🔥 전체 통합 퀴즈 (150문제)</button></div>
+  <div class="panel"    id="panel2">
+    <div class="qz-banner"><div class="qzb-ico">📝</div><div class="qzb-title">빈칸 맞추기</div><div class="qzb-desc">단어 속 빈칸 한자를 4지선다로 맞춰요!<br>두 단어 힌트로 문맥까지 함께 학습</div></div>
+    <div class="my-rank" id="myRank" style="display:none"><span class="mr-lbl">내 등급</span><span class="mr-rank" id="mrRankTxt"></span><span class="mr-pct" id="mrPctTxt"></span></div>
+    <div class="sec-list" id="qzSecList"></div>
+    <button class="bigbtn dark" onclick="startFlip(-1)">📝 전체 150자 빈칸 맞추기</button>
+  </div>
+</div>
+</div>
+
+<!-- STUDY1 -->
+<div id="study1" class="scr off">
+  <div class="tb"><button class="tb-back" onclick="back1()">←</button><div class="tb-info"><div class="tb-title" id="t1title"></div><div class="tb-sub" id="t1sub">그림카드</div></div><div class="tb-cnt" id="t1cnt"></div></div>
+  <div class="pbar"><div class="pfill" id="pf1" style="width:0%"></div></div>
+  <div class="card-stage">
+    <div class="card-outer" onclick="flip1()">
+      <div class="card-inner" id="ci1">
+        <div class="face face-front">
+          <div class="cf-badge" id="cf_badge"></div>
+          <div class="cf-rad"   id="cf_rad"></div>
+          <div class="cf-k"     id="cf_k"></div>
+          <div class="cf-hint"  id="cf_hint"></div>
+          <div class="cf-tap">탭하여 훈음 확인 ↺</div>
+        </div>
+        <div class="face face-back">
+          <div class="cb-k"    id="cb_k"></div>
+          <div class="cb-read" id="cb_read"></div>
+          <div class="cb-mean" id="cb_mean"></div>
+          <div class="cb-line"></div>
+          <div class="cb-rad-row"><span class="cb-rl">부수</span><span class="cb-rv" id="cb_rad"></span></div>
+          <div class="cb-orig"  id="cb_orig"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ca">
+    <button class="cabtn ca-prev" onclick="prev1()">‹</button>
+    <button class="cabtn ca-again" onclick="mark1(false)">❌ 다시</button>
+    <button class="cabtn ca-know"  onclick="mark1(true)">⭕ 외웠어</button>
+  </div>
+</div>
+
+<!-- RESULT1 -->
+<div id="result1" class="scr off"><div class="result-wrap"><div class="ri">
+  <div class="ri-e" id="r1e"></div><div class="ri-t" id="r1t"></div><div class="ri-s">학습 완료!</div>
+  <div class="stats">
+    <div class="stat cg"><div class="stat-n" id="r1kn"></div><div class="stat-l">✅ 외웠음</div></div>
+    <div class="stat cr"><div class="stat-n" id="r1un"></div><div class="stat-l">❌ 모름</div></div>
+    <div class="stat cgo"><div class="stat-n" id="r1pt"></div><div class="stat-l">정답률</div></div>
+  </div>
+  <div class="w-sec" id="ws1"><div class="w-ttl">❌ 다시 볼 한자</div><div class="w-chips" id="wc1"></div></div>
+  <div class="r-btns"><button class="rbtn btn-gold" id="r1retry"></button><button class="rbtn btn-outline" onclick="goHome()">🏠 홈으로</button></div>
+</div></div></div>
+
+<!-- STUDY2 -->
+<div id="study2" class="scr off">
+  <div class="tb"><button class="tb-back" onclick="back2()">←</button><div class="tb-info"><div class="tb-title" id="t2title"></div><div class="tb-sub" id="t2sub"></div></div><div class="tb-cnt" id="t2cnt" style="color:#5b21b6"></div></div>
+  <div class="pbar"><div class="pfill" id="pf2" style="width:0%"></div></div>
+  <div class="rv-banner hide" id="rvBanner"><span>🔁</span><div class="rv-txt" id="rvTxt"></div></div>
+  <!-- 문제 영역 -->
+  <div style="flex-shrink:0;padding:12px 16px 6px;text-align:center;">
+    <div style="font-size:11px;color:var(--gray);margin-bottom:10px;letter-spacing:.5px;" id="s2_qnum"></div>
+    <div style="display:flex;justify-content:center;align-items:center;gap:16px;margin-bottom:6px;">
+      <div style="text-align:center;">
+        <div id="s2_blank"  style="font-family:serif;font-size:clamp(38px,12vw,56px);font-weight:800;color:var(--ink);line-height:1.2;letter-spacing:5px;"></div>
+        <div id="s2_reading" style="font-size:12px;color:var(--gray);margin-top:3px;"></div>
+      </div>
+      <div style="width:1px;height:40px;background:rgba(154,123,46,.2);"></div>
+      <div style="text-align:center;">
+        <div id="s2_blank2" style="font-family:serif;font-size:clamp(38px,12vw,56px);font-weight:800;color:var(--ink);line-height:1.2;letter-spacing:5px;"></div>
+        <div id="s2_reading2" style="font-size:12px;color:var(--gray);margin-top:3px;"></div>
+      </div>
+    </div>
+  </div>
+  <!-- 4지선다 보기 -->
+  <div class="qchoices" id="s2choices"></div>
+</div>
+
+<!-- RESULT2 -->
+<div id="result2" class="scr off"><div class="result-wrap"><div class="ri">
+  <div class="ri-e" id="r2e"></div><div class="ri-t" id="r2t"></div><div class="ri-s" id="r2s"></div>
+  <div class="stats">
+    <div class="stat cg"><div class="stat-n" id="r2kn"></div><div class="stat-l">✅ 외웠음</div></div>
+    <div class="stat cr"><div class="stat-n" id="r2un"></div><div class="stat-l">❌ 모름</div></div>
+    <div class="stat cgo"><div class="stat-n" id="r2pt"></div><div class="stat-l">정답률</div></div>
+  </div>
+  <div class="w-sec" id="ws2"><div class="w-ttl">❌ 다시 볼 한자</div><div class="w-chips" id="wc2"></div></div>
+  <div class="r-btns">
+    <button class="rbtn btn-red"     id="r2rv"  onclick="startReview()"></button>
+    <button class="rbtn btn-gold"    onclick="retryFlip()">🔄 처음부터</button>
+    <button class="rbtn btn-outline" onclick="goHome()">🏠 홈으로</button>
+  </div>
+</div></div></div>
+
+<!-- QUIZ -->
+<div id="quiz" class="scr off">
+  <div class="tb"><button class="tb-back" onclick="backQuiz()">←</button><div class="tb-info"><div class="tb-title" id="qtitle"></div><div class="tb-sub" id="qsub"></div></div><div class="tb-cnt" id="qscore" style="color:#5b21b6">0점</div></div>
+  <div class="qpbar"><div class="qpfill" id="qpf" style="width:0%"></div></div>
+  <div class="sdbar"><div class="sd" id="sd0"></div><div class="sd" id="sd1"></div><div class="sd" id="sd2"></div><div class="sd" id="sd3"></div><div class="sd" id="sd4"></div></div>
+  <div class="qq-area"><div class="qq-num" id="qqnum"></div><div class="qq-k" id="qqk"></div><div class="qq-type">이 漢字의 훈음은?</div></div>
+  <div class="qchoices" id="qchoices"></div>
+</div>
+
+<!-- QRESULT -->
+<div id="qresult" class="scr off"><div class="result-wrap"><div class="ri">
+  <div class="rank-card" id="rankCard"><div class="rk-e" id="rke"></div><div class="rk-b" id="rkb"></div><div class="rk-n" id="rkn"></div><div class="rk-d" id="rkd"></div></div>
+  <div class="stats">
+    <div class="stat cg"><div class="stat-n" id="qrc"></div><div class="stat-l">✅ 정답</div></div>
+    <div class="stat cr"><div class="stat-n" id="qrw"></div><div class="stat-l">❌ 오답</div></div>
+    <div class="stat cpu"><div class="stat-n" id="qrp"></div><div class="stat-l">정답률</div></div>
+  </div>
+  <div class="w-sec" id="qrws"><div class="w-ttl">📕 오답 노트</div><div class="w-chips" id="qrwc"></div></div>
+  <div class="r-btns">
+    <button class="rbtn btn-red" id="qrRetryW" onclick="retryWrong()"></button>
+    <button class="rbtn btn-pu"  id="qrRetry"  onclick="retryQuiz()"></button>
+    <button class="rbtn btn-outline" onclick="goHome()">🏠 홈으로</button>
+  </div>
+</div></div></div>
+
+<script>
+/* ── 데이터 ── */
+const H=[
+{k:"加",p:"가",m:"더할 가",r:"力(힘 력)",o:"힘(力)을 더하여 입(口)으로 외친다는 뜻이에요."},
+{k:"可",p:"가",m:"옳을 가",r:"口(입 구)",o:"丁자처럼 구부러진 모양에서 유래 → 가능하다·옳다."},
+{k:"角",p:"각",m:"뿔 각",r:"角(뿔 각)",o:"동물의 뿔 모양을 그대로 본뜬 글자예요."},
+{k:"感",p:"감",m:"느낄 감",r:"心(마음 심)",o:"마음(心)이 움직여 느낌이 생긴다는 뜻이에요."},
+{k:"客",p:"객",m:"손님 객",r:"宀(집 면)",o:"집(宀) 안에 각각(各) 찾아온 사람 → 손님."},
+{k:"格",p:"격",m:"격식 격",r:"木(나무 목)",o:"나무(木)의 결이 일정한 규격을 이루는 모습."},
+{k:"決",p:"결",m:"결단할 결",r:"水(물 수)",o:"물(水)이 막힌 곳을 터뜨리듯 결정을 내려요!"},
+{k:"結",p:"결",m:"맺을 결",r:"糸(실 사)",o:"실(糸)로 단단히 묶어 맺는다는 뜻이에요."},
+{k:"輕",p:"경",m:"가벼울 경",r:"車(수레 거)",o:"수레(車)가 가볍게 달리는 모습에서 유래했어요."},
+{k:"敬",p:"경",m:"공경할 경",r:"攴(칠 복)",o:"채찍(攴)으로 스스로를 바로잡아 공경한다는 뜻."},
+{k:"界",p:"계",m:"지경 계",r:"田(밭 전)",o:"밭(田)과 밭 사이의 경계선을 뜻해요."},
+{k:"苦",p:"고",m:"괴로울 고",r:"艹(풀 초)",o:"쓴 풀(艹)이 괴롭다는 뜻에서 유래했어요."},
+{k:"考",p:"고",m:"상고할 고",r:"老(늙을 로)",o:"늙은 어른(老)이 깊이 생각한다는 뜻이에요."},
+{k:"告",p:"고",m:"알릴 고",r:"口(입 구)",o:"소(牛)를 신에게 바치며 입(口)으로 고한다는 뜻."},
+{k:"曲",p:"곡",m:"굽을 곡",r:"曲(굽을 곡)",o:"나무통을 굽혀 만든 모양을 본뜬 글자예요."},
+{k:"公",p:"공",m:"공변될 공",r:"八(여덟 팔)",o:"사사로운 것을 나눠(八) 공평하게 한다는 뜻."},
+{k:"果",p:"과",m:"과실 과",r:"木(나무 목)",o:"나무(木) 위에 열매가 달린 모양을 본뜬 글자."},
+{k:"過",p:"과",m:"지날 과",r:"辶(착)",o:"길을 걸어서(辶) 통과한다는 뜻이에요."},
+{k:"球",p:"구",m:"공 구",r:"王(구슬 옥)",o:"구슬(玉)처럼 둥글다는 뜻이에요."},
+{k:"郡",p:"군",m:"고을 군",r:"邑(고을 읍)",o:"임금이 다스리는(君) 고을(邑)이에요."},
+{k:"貴",p:"귀",m:"귀할 귀",r:"貝(조개 패)",o:"옛날 화폐인 조개(貝)가 귀하다는 뜻이에요."},
+{k:"根",p:"근",m:"뿌리 근",r:"木(나무 목)",o:"나무(木)의 땅 속 뿌리를 뜻해요."},
+{k:"級",p:"급",m:"등급 급",r:"糸(실 사)",o:"실(糸)의 굵기로 품질 등급을 매긴다는 뜻."},
+{k:"吉",p:"길",m:"길할 길",r:"口(입 구)",o:"선비(士)가 입(口)으로 좋은 말을 한다는 뜻."},
+{k:"能",p:"능",m:"능할 능",r:"肉(고기 육)",o:"곰이 재주를 부리는 모양에서 능하다는 뜻이 됐어요."},
+{k:"堂",p:"당",m:"집 당",r:"土(흙 토)",o:"높이 쌓인(尚) 흙(土) 위에 세운 당당한 건물."},
+{k:"待",p:"대",m:"기다릴 대",r:"彳(척)",o:"길을 걷다가(彳) 절(寺)에서 기다린다는 뜻."},
+{k:"德",p:"덕",m:"덕 덕",r:"彳(척)",o:"곧은(直) 마음(心)으로 행동(彳)하는 것이 덕."},
+{k:"圖",p:"도",m:"그림 도",r:"囗(위)",o:"큰 테두리(囗) 안에 설계를 그린 지도·도면."},
+{k:"度",p:"도",m:"법도 도",r:"广(엄)",o:"집(广) 안에서 자로 재는 법도를 뜻해요."},
+{k:"童",p:"동",m:"아이 동",r:"立(설 립)",o:"땅(里) 위에 서 있는(立) 아이의 모습이에요."},
+{k:"動",p:"동",m:"움직일 동",r:"力(힘 력)",o:"무거운 것(重)을 힘(力)으로 움직인다는 뜻."},
+{k:"落",p:"락",m:"떨어질 락",r:"艹(초)",o:"풀(艹)잎이 물(洛) 위에 떨어지는 모습이에요."},
+{k:"良",p:"량",m:"어질 량",r:"良(량)",o:"좋은 쌀과 나쁜 쌀을 골라내는 모습 → 어질다."},
+{k:"歷",p:"력",m:"지낼 력",r:"止(지)",o:"발자국(止)처럼 지나온 세월을 기록한다는 뜻."},
+{k:"例",p:"례",m:"법식 례",r:"人(인)",o:"사람들이 줄지어 선 규칙적인 모습 → 규칙·예."},
+{k:"禮",p:"례",m:"예도 례",r:"示(시)",o:"신(示)에게 풍성한(豊) 제물을 올리는 예식."},
+{k:"路",p:"로",m:"길 로",r:"足(발 족)",o:"발(足)로 밟아 만들어진 각각의(各) 길이에요."},
+{k:"勞",p:"로",m:"수고로울 로",r:"力(힘 력)",o:"불(火) 위에서 힘(力)껏 일한다는 뜻이에요."},
+{k:"綠",p:"록",m:"푸를 록",r:"糸(실 사)",o:"초록빛(彔) 실(糸)의 색깔 → 초록색을 뜻해요."},
+{k:"流",p:"류",m:"흐를 류",r:"水(물 수)",o:"물(水)이 구불구불 흘러가는 모양이에요."},
+{k:"李",p:"리",m:"오얏 리",r:"木(나무 목)",o:"나무(木)에 달린 자두(子) 열매를 뜻해요."},
+{k:"亡",p:"망",m:"망할 망",r:"亡(망)",o:"사람이 숨거나 도망가는 모양 → 없어지다."},
+{k:"買",p:"매",m:"살 매",r:"貝(조개 패)",o:"그물(网)로 낚듯이 돈(貝)을 주고 산다는 뜻."},
+{k:"賣",p:"매",m:"팔 매",r:"貝(조개 패)",o:"물건을 내보내(出) 팔아 돈(貝)을 받는다는 뜻."},
+{k:"美",p:"미",m:"아름다울 미",r:"羊(양 양)",o:"살찌고 큰(大) 양(羊)이 아름답다는 뜻이에요."},
+{k:"朴",p:"박",m:"순박할 박",r:"木(나무 목)",o:"나무(木)처럼 꾸밈없이 소박하다는 뜻이에요."},
+{k:"反",p:"반",m:"돌이킬 반",r:"又(우)",o:"손(又)으로 방향을 뒤집는 모습 → 반대로!"},
+{k:"發",p:"발",m:"필 발",r:"弓(활 궁)",o:"활(弓)을 쏘아 화살이 펼쳐지는 모습이에요."},
+{k:"法",p:"법",m:"법 법",r:"水(물 수)",o:"물(水)처럼 공평하게 흐르는 정신에서 법이 유래했어요."},
+{k:"兵",p:"병",m:"군사 병",r:"八(팔)",o:"두 손(廾)으로 도끼(斤)를 든 병사의 모습이에요."},
+{k:"病",p:"병",m:"병 병",r:"疒(녁)",o:"병상(疒)에 누운 환자의 모습 → 병들다."},
+{k:"福",p:"복",m:"복 복",r:"示(시)",o:"신(示)이 가득 채워(畐) 내려주는 복을 뜻해요."},
+{k:"服",p:"복",m:"옷 복",r:"月(월)",o:"몸(月)에 손으로 입히는 것 → 옷·입다."},
+{k:"奉",p:"봉",m:"받들 봉",r:"廾(공)",o:"두 손(廾)으로 물건을 받쳐 올리는 모습이에요."},
+{k:"冰",p:"빙",m:"얼음 빙",r:"水(수)",o:"물(水)이 결정화되어 언 얼음을 뜻해요."},
+{k:"仕",p:"사",m:"벼슬할 사",r:"人(인)",o:"사람(人)이 선비(士)로서 벼슬을 한다는 뜻."},
+{k:"思",p:"사",m:"생각 사",r:"心(마음 심)",o:"밭(田) 같은 머리와 마음(心)으로 생각해요."},
+{k:"史",p:"사",m:"역사 사",r:"口(구)",o:"손에 붓을 들고 기록하는 사관의 모습이에요."},
+{k:"使",p:"사",m:"하여금 사",r:"人(인)",o:"사람(人)을 관리(吏)처럼 부린다는 뜻이에요."},
+{k:"算",p:"산",m:"셈 산",r:"竹(대 죽)",o:"대나무(竹) 산가지를 눈(目)으로 보며 셈해요."},
+{k:"相",p:"상",m:"서로 상",r:"木(나무 목)",o:"나무(木)를 눈(目)으로 살핀다 → 서로 보다."},
+{k:"席",p:"석",m:"자리 석",r:"广(엄)",o:"집(广) 안에 깔아놓은 자리를 뜻해요."},
+{k:"雪",p:"설",m:"눈 설",r:"雨(비 우)",o:"하늘(雨)에서 내려와 쓸어야 하는 것 → 눈."},
+{k:"省",p:"성",m:"살필 성",r:"目(눈 목)",o:"눈(目)을 가늘게(少) 뜨고 꼼꼼히 살핀다는 뜻."},
+{k:"洗",p:"세",m:"씻을 세",r:"水(수)",o:"물(水)로 먼저(先) 깨끗이 씻어낸다는 뜻이에요."},
+{k:"消",p:"소",m:"사라질 소",r:"Water(수)",o:"물(Water)이 작아지듯(肖) 점점 사라진다는 뜻."},
+{k:"速",p:"속",m:"빠를 속",r:"辶(착)",o:"묶은(束) 것을 풀어 길을(辶) 달린다는 뜻."},
+{k:"孫",p:"손",m:"손자 손",r:"子(자)",o:"아이(子)가 실처럼(系) 이어진다 → 손자."},
+{k:"樹",p:"수",m:"나무 수",r:"木(나무 목)",o:"크고 곧게 서 있는(竪) 나무(木)를 뜻해요."},
+{k:"數",p:"수",m:"셈 수",r:"攴(복)",o:"채찍(攴)으로 치며 하나하나 세어 수를 센다는 뜻."},
+{k:"宿",p:"숙",m:"잠잘 숙",r:"宀(면)",o:"집(宀) 안에 사람이 자리에서 자는 모습이에요."},
+{k:"順",p:"순",m:"순할 순",r:"頁(혈)",o:"강물처럼 머리(頁)를 숙이고 순리대로 따라요."},
+{k:"術",p:"술",m:"재주 술",r:"行(행)",o:"길(行)을 다니며 익힌 재주와 기술을 뜻해요."},
+{k:"習",p:"습",m:"익힐 습",r:"羽(깃 우)",o:"새끼 새가 깃(羽)을 퍼덕이며 나는 법을 반복해요."},
+{k:"勝",p:"승",m:"이길 승",r:"力(힘 력)",o:"힘(力)으로 경쟁을 이긴다는 뜻이에요."},
+{k:"始",p:"시",m:"처음 시",r:"女(녀)",o:"여자(女)가 처음 시작한다는 뜻이에요."},
+{k:"式",p:"식",m:"법 식",r:"工(공)",o:"일정한 형식(工)과 규칙을 뜻해요."},
+{k:"臣",p:"신",m:"신하 신",r:"臣(신)",o:"눈을 크게 뜨고 임금을 올려보는 신하의 눈 모양."},
+{k:"實",p:"실",m:"열매 실",r:"宀(면)",o:"집(宀) 안에 가득 찬(貫) 열매를 뜻해요."},
+{k:"失",p:"실",m:"잃을 실",r:"手(손 수)",o:"손에서 새가 날아가 버린 모습 → 잃다."},
+{k:"兒",p:"아",m:"아이 아",r:"儿(인)",o:"머리 숨구멍이 아직 열려있는 아기의 두상이에요."},
+{k:"愛",p:"애",m:"사랑 애",r:"心(심)",o:"마음(心)을 받들고 나아가는 모습 → 사랑."},
+{k:"野",p:"야",m:"들 야",r:"里(리)",o:"마을(里)을 주어(予) 나눈 바깥, 넓은 들판이에요."},
+{k:"藥",p:"약",m:"약 약",r:"艹(초)",o:"풀(艹)로 만든 즐거운(樂) 것 → 병을 낫게 하는 약."},
+{k:"陽",p:"양",m:"볕 양",r:"阜(부)",o:"언덕(阜) 위로 태양이 밝게 떠오르는(昜) 모습."},
+{k:"洋",p:"양",m:"큰바다 양",r:"Water(수)",o:"물(Water)이 양(羊)처럼 넓게 퍼진 큰 바다예요."},
+{k:"漁",p:"어",m:"고기잡을 어",r:"Water(수)",o:"물(Water) 속 물고기(魚)를 잡는다는 뜻이에요."},
+{k:"億",p:"억",m:"억 억",r:"人(인)",o:"사람(人)의 마음(意)으로도 헤아리기 어려운 큰 수."},
+{k:"業",p:"업",m:"일 업",r:"木(목)",o:"악기를 걸던 나무 틀에서 유래해 큰 일·직업."},
+{k:"如",p:"여",m:"같을 여",r:"女(녀)",o:"여자(女)가 말(口)한 대로 따른다 → 같다."},
+{k:"然",p:"연",m:"그럴 연",r:"火(화)",o:"불(火) 위에 고기를 올려 굽는 모습 → 그렇다."},
+{k:"溫",p:"온",m:"따뜻할 온",r:"Water(수)",o:"물(Water)이 따뜻하게 덮여 있는 모습이에요."},
+{k:"要",p:"요",m:"구할 요",r:"女(녀)",o:"허리에 손을 얹은 모습 → 중요하다·구하다."},
+{k:"勇",p:"용",m:"날쌜 용",r:"力(력)",o:"힘(力)이 솟아오르는(甬) 용감한 모습이에요."},
+{k:"雲",p:"운",m:"구름 운",r:"雨(우)",o:"하늘(雨)에서 뭉게뭉게 피어오르는 구름이에요."},
+{k:"運",p:"운",m:"움직일 운",r:"辶(착)",o:"군대가 이동하며(辶) 움직이는 모습 → 운반하다."},
+{k:"園",p:"원",m:"동산 원",r:"囗(위)",o:"담(囗)으로 둘러싸인 동산·정원을 뜻해요."},
+{k:"院",p:"원",m:"집 원",r:"阜(부)",o:"언덕(阜) 위에 완전한(完) 건물 → 관공서·병원."},
+{k:"油",p:"유",m:"기름 유",r:"Water(수)",o:"물(Water)처럼 흘러내리는 기름을 뜻해요."},
+{k:"由",p:"유",m:"말미암을 유",r:"田(전)",o:"밭(田)에서 싹이 위로 솟아나는 모습 → 원인."},
+{k:"飮",p:"음",m:"마실 음",r:"食(식)",o:"음식(食)을 목에 담그듯 마신다(欠)는 뜻이에요."},
+{k:"醫",p:"의",m:"의원 의",r:"醫(의)",o:"화살통·칼·술통의 합성어로 병을 고치는 의사."},
+{k:"以",p:"이",m:"써 이",r:"人(인)",o:"쟁기 모양에서 유래해 ~을 써서의 뜻이에요."},
+{k:"因",p:"인",m:"인할 인",r:"囗(위)",o:"큰 자리(囗) 위에 큰(大) 사람이 기댄다 → 원인."},
+{k:"任",p:"임",m:"맡길 임",r:"人(인)",o:"사람(人)에게 짐(壬)을 맡긴다는 뜻이에요."},
+{k:"者",p:"자",m:"놈 자",r:"老(로)",o:"솥에서 연기가 나는 모습 → ~하는 사람."},
+{k:"昨",p:"작",m:"어제 작",r:"日(일)",o:"지나간(乍) 날(日) → 어제를 뜻해요."},
+{k:"章",p:"장",m:"글 장",r:"音(음)",o:"문장(文)과 소리(音)가 합쳐진 글·악장이에요."},
+{k:"再",p:"재",m:"두 재",r:"冂(경)",o:"한 번 했던 것을 다시 한 번 더 한다는 뜻."},
+{k:"在",p:"재",m:"있을 재",r:"土(토)",o:"흙(土) 위에 싹이 자라 있다는 뜻이에요."},
+{k:"材",p:"재",m:"재목 재",r:"木(목)",o:"나무(木)를 재료(才)로 쓴다는 뜻이에요."},
+{k:"的",p:"적",m:"과녁 적",r:"白(백)",o:"흰(白) 바탕에 점(勺)을 찍은 과녁이에요."},
+{k:"赤",p:"적",m:"붉을 적",r:"赤(적)",o:"불(火)과 사람(大)이 합쳐진 붉은 모습이에요."},
+{k:"典",p:"전",m:"법 전",r:"八(팔)",o:"받침대 위에 올려진 중요한 책 → 법전·경전."},
+{k:"戰",p:"전",m:"싸움 전",r:"戈(과)",o:"두 군대가 창(戈)을 들고 맞붙어 싸우는 모습."},
+{k:"展",p:"전",m:"펼 전",r:"尸(시)",o:"두루마리를 펼쳐 보이는 모습 → 펼치다·전시하다."},
+{k:"庭",p:"정",m:"뜰 정",r:"广(엄)",o:"집(广) 앞에 쭉 뻗은(廷) 마당·뜰을 뜻해요."},
+{k:"定",p:"정",m:"정할 정",r:"宀(면)",o:"집(宀) 안에 발을 딛고(正) 머문다 → 정하다."},
+{k:"題",p:"제",m:"제목 제",r:"頁(혈)",o:"옳은(是) 머리말(頁) → 글의 제목이나 표제."},
+{k:"第",p:"제",m:"차례 제",r:"竹(죽)",o:"대나무(竹)로 만든 산가지로 순서를 매겨요."},
+{k:"族",p:"족",m:"겨레 족",r:"方(방)",o:"깃발 아래 화살을 든 전사들 → 같은 집단·겨레."},
+{k:"卒",p:"졸",m:"군사 졸",r:"十(십)",o:"옷에 표시를 단 병사를 뜻해요."},
+{k:"州",p:"주",m:"고을 주",r:"巛(천)",o:"강물 사이 모래섬이 솟아오른 모습 → 고을."},
+{k:"注",p:"주",m:"물댈 주",r:"Water(수)",o:"물(Water)을 한 곳에 쏟아 붓는다는 뜻이에요."},
+{k:"止",p:"지",m:"그칠 지",r:"止(지)",o:"발이 멈춰선 모양을 본뜬 글자예요."},
+{k:"知",p:"지",m:"알 지",r:"口(구)",o:"화살(矢)처럼 빠르게 입(口)으로 말한다 → 알다."},
+{k:"紙",p:"지",m:"종이 지",r:"糸(사)",o:"실(糸)처럼 얇게 만들어진 씨(氏) → 종이."},
+{k:"集",p:"집",m:"모일 집",r:"木(목)",o:"나무(木) 위에 새(隹)들이 모여든 모습이에요."},
+{k:"參",p:"참",m:"참여할 참",r:"厶(사)",o:"여러 사람이 한 자리에 모여 참가한다는 뜻."},
+{k:"窓",p:"창",m:"창문 창",r:"穴(혈)",o:"지붕(穴) 위에 뚫어 바람이 통하는 창문이에요."},
+{k:"責",p:"책",m:"꾸짖을 책",r:"貝(패)",o:"돈(貝)을 돌려달라고 꾸짖는 모습 → 책임."},
+{k:"淸",p:"청",m:"맑을 청",r:"Water(수)",o:"물(Water)이 파랗고(靑) 맑은 모습이에요."},
+{k:"體",p:"체",m:"몸 체",r:"骨(골)",o:"뼈(骨)와 살(豊)로 이루어진 몸 전체를 뜻해요."},
+{k:"初",p:"초",m:"처음 초",r:"刀(도)",o:"옷감(衣)을 칼(刀)로 처음 자른다 → 처음."},
+{k:"村",p:"촌",m:"마을 촌",r:"木(목)",o:"나무(木)들이 모인 가까운(寸) 곳 → 마을."},
+{k:"總",p:"총",m:"다 총",r:"糸(사)",o:"실(糸)처럼 모두 이어진 전체를 뜻해요."},
+{k:"最",p:"최",m:"가장 최",r:"曰(왈)",o:"가장 높이 쌓아(取) 올린 것 → 제일·가장."},
+{k:"追",p:"추",m:"쫓을 추",r:"辶(착)",o:"길을(辶) 달리며 뒤쫓는 모습이에요."},
+{k:"春",p:"춘",m:"봄 춘",r:"日(일)",o:"땅 위로 초목이 쑥쑥 자라는 햇살 가득한 봄이에요."},
+{k:"充",p:"충",m:"찰 충",r:"儿(인)",o:"갓 태어난(育) 사람이 가득 채운다는 뜻이에요."},
+{k:"取",p:"취",m:"가질 취",r:"又(우)",o:"귀(耳)를 손으로 잡는 모습 → 가지다·취하다."},
+{k:"親",p:"친",m:"친할 친",r:"見(견)",o:"나무(木) 위에 서서(立) 멀리 보는(見) 사람 → 부모."},
+{k:"快",p:"쾌",m:"쾌할 쾌",r:"心(심)",o:"마음(心)이 확 트이는(夬) 기분 좋은 느낌이에요."},
+{k:"打",p:"타",m:"칠 타",r:"手(수)",o:"손으로 못(丁)을 박듯 친다는 뜻이에요."},
+{k:"他",p:"타",m:"다를 타",r:"人(인)",o:"나와 다른(也) 사람(人) → 다른 것·타인."},
+{k:"太",p:"태",m:"클 태",r:"大(대)",o:"크다(大)에 점을 더해 더욱 크다는 것을 강조해요."},
+{k:"宅",p:"택",m:"집 택",r:"宀(면)",o:"집(宀) 안에 터 잡고 사는(乇) 곳 → 집·주택."},
+{k:"通",p:"통",m:"통할 통",r:"辶(착)",o:"길이(辶) 막힘없이 뚫려 이어진다는 뜻이에요."},
+{k:"特",p:"특",m:"특별할 특",r:"牛(우)",o:"소(牛)처럼 우직하고 특별한 존재예요."},
+];
+
+const SEC=[
+  {l:"섹터 1",r:"加~度",c:H.slice(0,30)},
+  {l:"섹터 2",r:"童~使",c:H.slice(30,60)},
+  {l:"섹터 3",r:"算~業",c:H.slice(60,90)},
+  {l:"섹터 4",r:"如~題",c:H.slice(90,120)},
+  {l:"섹터 5",r:"第~特",c:H.slice(120,150)},
+];
+
+/* 단어 예시 - 각 한자마다 [{w:단어, r:읽기, pos:빈칸위치(0=앞,1=뒤)}] */
+const WORDS={
+  "加":[{w:"加入",r:"가입",pos:0},{w:"追加",r:"추가",pos:1}],
+  "可":[{w:"可能",r:"가능",pos:0},{w:"許可",r:"허가",pos:1}],
+  "角":[{w:"角度",r:"각도",pos:0},{w:"直角",r:"직각",pos:1}],
+  "感":[{w:"感動",r:"감동",pos:0},{w:"感謝",r:"감사",pos:0}],
+  "客":[{w:"客室",r:"객실",pos:0},{w:"旅客",r:"여객",pos:1}],
+  "格":[{w:"格式",r:"격식",pos:0},{w:"資格",r:"자격",pos:1}],
+  "決":[{w:"決定",r:"결정",pos:0},{w:"解決",r:"해결",pos:1}],
+  "結":[{w:"結果",r:"결과",pos:0},{w:"結婚",r:"결혼",pos:0}],
+  "輕":[{w:"輕快",r:"경쾌",pos:0},{w:"輕重",r:"경중",pos:0}],
+  "敬":[{w:"敬禮",r:"경례",pos:0},{w:"尊敬",r:"존경",pos:1}],
+  "界":[{w:"世界",r:"세계",pos:1},{w:"限界",r:"한계",pos:1}],
+  "苦":[{w:"苦生",r:"고생",pos:0},{w:"苦痛",r:"고통",pos:0}],
+  "考":[{w:"考試",r:"고시",pos:0},{w:"思考",r:"사고",pos:1}],
+  "告":[{w:"告白",r:"고백",pos:0},{w:"廣告",r:"광고",pos:1}],
+  "曲":[{w:"曲線",r:"곡선",pos:0},{w:"作曲",r:"작곡",pos:1}],
+  "公":[{w:"公園",r:"공원",pos:0},{w:"公正",r:"공정",pos:0}],
+  "果":[{w:"果實",r:"과실",pos:0},{w:"結果",r:"결과",pos:1}],
+  "過":[{w:"過去",r:"과거",pos:0},{w:"通過",r:"통과",pos:1}],
+  "球":[{w:"地球",r:"지구",pos:1},{w:"球場",r:"구장",pos:0}],
+  "郡":[{w:"郡民",r:"군민",pos:0},{w:"郡守",r:"군수",pos:0}],
+  "貴":[{w:"貴重",r:"귀중",pos:0},{w:"高貴",r:"고귀",pos:1}],
+  "根":[{w:"根本",r:"근본",pos:0},{w:"根據",r:"근거",pos:0}],
+  "級":[{w:"級友",r:"급우",pos:0},{w:"等級",r:"등급",pos:1}],
+  "吉":[{w:"吉日",r:"길일",pos:0},{w:"吉祥",r:"길상",pos:0}],
+  "能":[{w:"能力",r:"능력",pos:0},{w:"可能",r:"가능",pos:1}],
+  "堂":[{w:"食堂",r:"식당",pos:1},{w:"堂堂",r:"당당",pos:0}],
+  "待":[{w:"待遇",r:"대우",pos:0},{w:"期待",r:"기대",pos:1}],
+  "德":[{w:"德行",r:"덕행",pos:0},{w:"道德",r:"도덕",pos:1}],
+  "圖":[{w:"圖書",r:"도서",pos:0},{w:"地圖",r:"지도",pos:1}],
+  "度":[{w:"度數",r:"도수",pos:0},{w:"態度",r:"태도",pos:1}],
+  "童":[{w:"童話",r:"동화",pos:0},{w:"兒童",r:"아동",pos:1}],
+  "動":[{w:"運動",r:"운동",pos:1},{w:"行動",r:"행동",pos:1}],
+  "落":[{w:"落葉",r:"낙엽",pos:0},{w:"落下",r:"낙하",pos:0}],
+  "良":[{w:"良心",r:"양심",pos:0},{w:"優良",r:"우량",pos:1}],
+  "歷":[{w:"歷史",r:"역사",pos:0},{w:"經歷",r:"경력",pos:1}],
+  "例":[{w:"例外",r:"예외",pos:0},{w:"事例",r:"사례",pos:1}],
+  "禮":[{w:"禮節",r:"예절",pos:0},{w:"失禮",r:"실례",pos:1}],
+  "路":[{w:"道路",r:"도로",pos:1},{w:"路線",r:"노선",pos:0}],
+  "勞":[{w:"勞動",r:"노동",pos:0},{w:"勞力",r:"노력",pos:0}],
+  "綠":[{w:"綠色",r:"녹색",pos:0},{w:"綠地",r:"녹지",pos:0}],
+  "流":[{w:"流行",r:"유행",pos:0},{w:"交流",r:"교류",pos:1}],
+  "李":[{w:"李氏",r:"이씨",pos:0},{w:"行李",r:"행리",pos:1}],
+  "亡":[{w:"死亡",r:"사망",pos:1},{w:"逃亡",r:"도망",pos:1}],
+  "買":[{w:"買入",r:"매입",pos:0},{w:"購買",r:"구매",pos:1}],
+  "賣":[{w:"賣出",r:"매출",pos:0},{w:"販賣",r:"판매",pos:1}],
+  "美":[{w:"美術",r:"미술",pos:0},{w:"美人",r:"미인",pos:0}],
+  "朴":[{w:"素朴",r:"소박",pos:1},{w:"朴實",r:"박실",pos:0}],
+  "反":[{w:"反對",r:"반대",pos:0},{w:"反省",r:"반성",pos:0}],
+  "發":[{w:"發展",r:"발전",pos:0},{w:"出發",r:"출발",pos:1}],
+  "法":[{w:"法律",r:"법률",pos:0},{w:"方法",r:"방법",pos:1}],
+  "兵":[{w:"兵士",r:"병사",pos:0},{w:"兵力",r:"병력",pos:0}],
+  "病":[{w:"病院",r:"병원",pos:0},{w:"疾病",r:"질병",pos:1}],
+  "福":[{w:"福祉",r:"복지",pos:0},{w:"幸福",r:"행복",pos:1}],
+  "服":[{w:"服裝",r:"복장",pos:0},{w:"衣服",r:"의복",pos:1}],
+  "奉":[{w:"奉仕",r:"봉사",pos:0},{w:"奉獻",r:"봉헌",pos:0}],
+  "冰":[{w:"冰水",r:"빙수",pos:0},{w:"冰河",r:"빙하",pos:0}],
+  "仕":[{w:"奉仕",r:"봉사",pos:1},{w:"仕事",r:"사사",pos:0}],
+  "思":[{w:"思想",r:"사상",pos:0},{w:"意思",r:"의사",pos:1}],
+  "史":[{w:"歷史",r:"역사",pos:1},{w:"史記",r:"사기",pos:0}],
+  "使":[{w:"使用",r:"사용",pos:0},{w:"大使",r:"대사",pos:1}],
+  "算":[{w:"算數",r:"산수",pos:0},{w:"計算",r:"계산",pos:1}],
+  "相":[{w:"相互",r:"상호",pos:0},{w:"首相",r:"수상",pos:1}],
+  "席":[{w:"座席",r:"좌석",pos:1},{w:"出席",r:"출석",pos:1}],
+  "雪":[{w:"雪景",r:"설경",pos:0},{w:"白雪",r:"백설",pos:1}],
+  "省":[{w:"省略",r:"생략",pos:0},{w:"反省",r:"반성",pos:1}],
+  "洗":[{w:"洗手",r:"세수",pos:0},{w:"洗面",r:"세면",pos:0}],
+  "消":[{w:"消火",r:"소화",pos:0},{w:"消費",r:"소비",pos:0}],
+  "速":[{w:"速度",r:"속도",pos:0},{w:"高速",r:"고속",pos:1}],
+  "孫":[{w:"孫子",r:"손자",pos:0},{w:"子孫",r:"자손",pos:1}],
+  "樹":[{w:"樹木",r:"수목",pos:0},{w:"植樹",r:"식수",pos:1}],
+  "數":[{w:"數學",r:"수학",pos:0},{w:"數字",r:"숫자",pos:0}],
+  "宿":[{w:"宿題",r:"숙제",pos:0},{w:"宿所",r:"숙소",pos:0}],
+  "順":[{w:"順序",r:"순서",pos:0},{w:"順理",r:"순리",pos:0}],
+  "術":[{w:"技術",r:"기술",pos:1},{w:"美術",r:"미술",pos:1}],
+  "習":[{w:"習慣",r:"습관",pos:0},{w:"學習",r:"학습",pos:1}],
+  "勝":[{w:"勝利",r:"승리",pos:0},{w:"優勝",r:"우승",pos:1}],
+  "始":[{w:"始作",r:"시작",pos:0},{w:"開始",r:"개시",pos:1}],
+  "式":[{w:"方式",r:"방식",pos:1},{w:"式場",r:"식장",pos:0}],
+  "臣":[{w:"臣下",r:"신하",pos:0},{w:"大臣",r:"대신",pos:1}],
+  "實":[{w:"實力",r:"실력",pos:0},{w:"事實",r:"사실",pos:1}],
+  "失":[{w:"失敗",r:"실패",pos:0},{w:"損失",r:"손실",pos:1}],
+  "兒":[{w:"兒童",r:"아동",pos:0},{w:"小兒",r:"소아",pos:1}],
+  "愛":[{w:"愛情",r:"애정",pos:0},{w:"愛國",r:"애국",pos:0}],
+  "野":[{w:"野外",r:"야외",pos:0},{w:"分野",r:"분야",pos:1}],
+  "藥":[{w:"藥局",r:"약국",pos:0},{w:"藥品",r:"약품",pos:0}],
+  "陽":[{w:"太陽",r:"태양",pos:1},{w:"陽光",r:"양광",pos:0}],
+  "洋":[{w:"洋食",r:"양식",pos:0},{w:"東洋",r:"동양",pos:1}],
+  "漁":[{w:"漁夫",r:"어부",pos:0},{w:"漁村",r:"어촌",pos:0}],
+  "億":[{w:"數億",r:"수억",pos:1},{w:"億萬",r:"억만",pos:0}],
+  "業":[{w:"職業",r:"직업",pos:1},{w:"業務",r:"업무",pos:0}],
+  "如":[{w:"如何",r:"여하",pos:0},{w:"如實",r:"여실",pos:0}],
+  "然":[{w:"自然",r:"자연",pos:1},{w:"當然",r:"당연",pos:1}],
+  "溫":[{w:"溫度",r:"온도",pos:0},{w:"溫泉",r:"온천",pos:0}],
+  "要":[{w:"要求",r:"요구",pos:0},{w:"重要",r:"중요",pos:1}],
+  "勇":[{w:"勇氣",r:"용기",pos:0},{w:"勇敢",r:"용감",pos:0}],
+  "雲":[{w:"雲海",r:"운해",pos:0},{w:"白雲",r:"백운",pos:1}],
+  "運":[{w:"運動",r:"운동",pos:0},{w:"幸運",r:"행운",pos:1}],
+  "園":[{w:"公園",r:"공원",pos:1},{w:"樂園",r:"낙원",pos:1}],
+  "院":[{w:"病院",r:"병원",pos:1},{w:"院長",r:"원장",pos:0}],
+  "油":[{w:"石油",r:"석유",pos:1},{w:"油田",r:"유전",pos:0}],
+  "由":[{w:"自由",r:"자유",pos:1},{w:"理由",r:"이유",pos:1}],
+  "飮":[{w:"飮食",r:"음식",pos:0},{w:"飮料",r:"음료",pos:0}],
+  "醫":[{w:"醫師",r:"의사",pos:0},{w:"醫學",r:"의학",pos:0}],
+  "以":[{w:"以上",r:"이상",pos:0},{w:"以下",r:"이하",pos:0}],
+  "因":[{w:"原因",r:"원인",pos:1},{w:"因果",r:"인과",pos:0}],
+  "任":[{w:"責任",r:"책임",pos:1},{w:"任務",r:"임무",pos:0}],
+  "者":[{w:"記者",r:"기자",pos:1},{w:"學者",r:"학자",pos:1}],
+  "昨":[{w:"昨日",r:"작일",pos:0},{w:"昨年",r:"작년",pos:0}],
+  "章":[{w:"文章",r:"문장",pos:1},{w:"章節",r:"장절",pos:0}],
+  "再":[{w:"再生",r:"재생",pos:0},{w:"再建",r:"재건",pos:0}],
+  "在":[{w:"現在",r:"현재",pos:1},{w:"存在",r:"존재",pos:1}],
+  "材":[{w:"材料",r:"재료",pos:0},{w:"木材",r:"목재",pos:1}],
+  "的":[{w:"目的",r:"목적",pos:1},{w:"的中",r:"적중",pos:0}],
+  "赤":[{w:"赤道",r:"적도",pos:0},{w:"赤字",r:"적자",pos:0}],
+  "典":[{w:"古典",r:"고전",pos:1},{w:"典型",r:"전형",pos:0}],
+  "戰":[{w:"戰爭",r:"전쟁",pos:0},{w:"作戰",r:"작전",pos:1}],
+  "展":[{w:"展示",r:"전시",pos:0},{w:"發展",r:"발전",pos:1}],
+  "庭":[{w:"庭園",r:"정원",pos:0},{w:"家庭",r:"가정",pos:1}],
+  "定":[{w:"決定",r:"결정",pos:1},{w:"定規",r:"정규",pos:0}],
+  "題":[{w:"問題",r:"문제",pos:1},{w:"題目",r:"제목",pos:0}],
+  "第":[{w:"第一",r:"제일",pos:0},{w:"落第",r:"낙제",pos:1}],
+  "族":[{w:"家族",r:"가족",pos:1},{w:"民族",r:"민족",pos:1}],
+  "卒":[{w:"卒業",r:"졸업",pos:0},{w:"士卒",r:"사졸",pos:1}],
+  "州":[{w:"九州",r:"구주",pos:1},{w:"州民",r:"주민",pos:0}],
+  "注":[{w:"注意",r:"주의",pos:0},{w:"注目",r:"주목",pos:0}],
+  "止":[{w:"停止",r:"정지",pos:1},{w:"止血",r:"지혈",pos:0}],
+  "知":[{w:"知識",r:"지식",pos:0},{w:"通知",r:"통지",pos:1}],
+  "紙":[{w:"新聞紙",r:"신문지",pos:1},{w:"紙面",r:"지면",pos:0}],
+  "集":[{w:"集中",r:"집중",pos:0},{w:"文集",r:"문집",pos:1}],
+  "參":[{w:"參加",r:"참가",pos:0},{w:"參考",r:"참고",pos:0}],
+  "窓":[{w:"窓門",r:"창문",pos:0},{w:"車窓",r:"차창",pos:1}],
+  "責":[{w:"責任",r:"책임",pos:0},{w:"責望",r:"책망",pos:0}],
+  "淸":[{w:"淸潔",r:"청결",pos:0},{w:"淸明",r:"청명",pos:0}],
+  "體":[{w:"身體",r:"신체",pos:1},{w:"體力",r:"체력",pos:0}],
+  "初":[{w:"初等",r:"초등",pos:0},{w:"最初",r:"최초",pos:1}],
+  "村":[{w:"農村",r:"농촌",pos:1},{w:"村落",r:"촌락",pos:0}],
+  "總":[{w:"總理",r:"총리",pos:0},{w:"合計總",r:"합계총",pos:1}],
+  "最":[{w:"最高",r:"최고",pos:0},{w:"最善",r:"최선",pos:0}],
+  "追":[{w:"追求",r:"추구",pos:0},{w:"追加",r:"추가",pos:0}],
+  "春":[{w:"春節",r:"춘절",pos:0},{w:"靑春",r:"청춘",pos:1}],
+  "充":[{w:"充電",r:"충전",pos:0},{w:"補充",r:"보충",pos:1}],
+  "取":[{w:"取得",r:"취득",pos:0},{w:"取消",r:"취소",pos:0}],
+  "親":[{w:"親友",r:"친우",pos:0},{w:"兩親",r:"양친",pos:1}],
+  "快":[{w:"快樂",r:"쾌락",pos:0},{w:"爽快",r:"상쾌",pos:1}],
+  "打":[{w:"打擊",r:"타격",pos:0},{w:"打開",r:"타개",pos:0}],
+  "他":[{w:"他人",r:"타인",pos:0},{w:"其他",r:"기타",pos:1}],
+  "太":[{w:"太陽",r:"태양",pos:0},{w:"太平",r:"태평",pos:0}],
+  "宅":[{w:"住宅",r:"주택",pos:1},{w:"宅地",r:"택지",pos:0}],
+  "通":[{w:"通話",r:"통화",pos:0},{w:"交通",r:"교통",pos:1}],
+  "特":[{w:"特別",r:"특별",pos:0},{w:"獨特",r:"독특",pos:1}],
+};
+
+/* 빈칸 만들기: pos=0이면 앞자리, pos=1이면 뒷자리 */
+function makeBlank(w,r,pos){
+  // 한자 표시
+  const ks=[...w];
+  ks[pos]='○';
+  // 음 표시 (읽기 음절 분리)
+  const rs=[...r];
+  rs[pos]='○';
+  return {kanji:ks.join(''), reading:rs.join('')};
+}
+const LVM=[
+  {n:"초급",r:"加~度",i:"加",bg:"#e8f5e8",col:"#2d7a4a"},
+  {n:"중급",r:"童~使",i:"動",bg:"#fef8e0",col:"#9a7b2e"},
+  {n:"고급",r:"算~業",i:"算",bg:"#e8f0fe",col:"#3b5bdb"},
+  {n:"심화",r:"如~題",i:"如",bg:"#f3e8ff",col:"#6040a0"},
+  {n:"완성",r:"第~特",i:"第",bg:"#fde8d0",col:"#b05010"},
+];
+const RANKS=[
+  {min:0, id:"bronze", e:"📖",b:"한자 초보",n:"한자 초보",d:"시작이 반이에요! 계속 해봐요"},
+  {min:30,id:"silver", e:"✏️",b:"한자 학생",n:"한자 학생",d:"조금씩 실력이 늘고 있어요!"},
+  {min:50,id:"gold",   e:"📜",b:"한자 선비",n:"한자 선비",d:"어엿한 선비! 훌륭해요"},
+  {min:70,id:"diamond",e:"🎓",b:"한자 학자",n:"한자 학자",d:"대단한 실력이에요!"},
+  {min:85,id:"master", e:"👑",b:"한자 박사",n:"한자 박사",d:"완벽! 진정한 한자 박사!"},
+];
+const CHEERS=[
+  {e:"🔥",m:"천재인데?!",s:"5문제 연속 정답!"},
+  {e:"⚡",m:"대단해!",s:"집중력이 최고예요!"},
+  {e:"🌟",m:"완벽해!",s:"흔들리지 않는군요!"},
+  {e:"🚀",m:"무적이야!",s:"멈출 수 없어요!"},
+  {e:"💎",m:"한자 박사?!",s:"이 속도면 금방 박사!"},
+  {e:"🎯",m:"정확해!",s:"실수가 없어요!"},
+];
+
+/* ── 상태 ── */
+let cur={};
+const bests={lv:{},sec:{},qz:{}};
+
+/* ── 유틸 ── */
+const $=id=>document.getElementById(id);
+function shuf(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function getRank(p){return[...RANKS].reverse().find(r=>p>=r.min)||RANKS[0];}
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('off',s.id!==id));}
+function goHome(){show('home');}
+
+/* 효과음 */
+let AC;
+function ac(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC;}
+function tone(f,t,d,v,tp='sine'){try{let ctx=ac(),o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type=tp;o.frequency.value=f;let n=ctx.currentTime;g.gain.setValueAtTime(0,n+t);g.gain.linearRampToValueAtTime(v,n+t+.02);g.gain.linearRampToValueAtTime(0,n+t+d);o.start(n+t);o.stop(n+t+d+.02);}catch(e){}}
+function sndOk(){tone(523.25,0,.12,.7);tone(783.99,.13,.2,.7);}
+function sndNg(){tone(220,0,.14,.4,'sawtooth');tone(196,.15,.18,.4,'sawtooth');}
+function sndFan(){[[392,0,.18],[392,.2,.18],[392,.4,.18],[311,.6,.12],[392,.73,.2],[311,.94,.12],[466,1.07,.3]].forEach(([f,t,d])=>{tone(f,t,d,.5,'square');tone(f*2,t,d,.2);});}
+
+/* 탭 */
+function setTab(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',i===j));
+  document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('on',i===j));
+  if(i===1)renderQuizHome();   // 2단계 = 퀴즈
+  if(i===2)renderQzHome();     // 3단계 = 빈칸맞추기
+}
+
+/* ── 홈 렌더 ── */
+function renderLv(){
+  $('lvList').innerHTML=LVM.map((m,i)=>{
+    const b=bests.lv[i];
+    return`<div class="lv-item" style="flex-direction:column;align-items:stretch;gap:9px;cursor:default;">
+      <div style="display:flex;align-items:center;gap:11px;">
+        <div class="lv-ico" style="background:${m.bg};color:${m.col}">${m.i}</div>
+        <div style="flex:1"><div class="lv-name">${m.n} — ${m.r}</div><div class="lv-meta">30자 · 그림카드</div></div>
+        <div class="lv-prog ${b==null?'none':''}">${b!=null?b+'%':'—'}</div>
+      </div>
+      <div style="display:flex;gap:7px;">
+        <button onclick="startLv(${i},false)" style="flex:1;padding:8px 6px;border:none;border-radius:10px;background:rgba(154,123,46,.12);color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📋 순서대로</button>
+        <button onclick="startLv(${i},true)" style="flex:1;padding:8px 6px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🔀 랜덤</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function renderSec(){
+  $('secList').innerHTML=SEC.map((s,i)=>{
+    const b=bests.qz[i];const sc=b==null?'none':b>=70?'good':'mid';
+    return`<div class="sec-item" onclick="startQuiz(${i})">
+      <div class="sec-num">${i+1}</div>
+      <div class="sec-info"><div class="sec-title">${s.l} · ${s.r}</div><div class="sec-range">${s.c[0].k}~${s.c[29].k} · 30자</div></div>
+      <div class="sec-score ${sc}">${b!=null?b+'%':'—'}</div>
+    </div>`;
+  }).join('');
+}
+function renderQuizHome(){renderSec();}
+function renderQzHome(){
+  const all=Object.values(bests.qz);
+  if(all.length){
+    const best=Math.max(...all),rk=getRank(best);
+    $('myRank').style.display='flex';
+    $('mrRankTxt').textContent=rk.e+' '+rk.n;
+    $('mrPctTxt').textContent='최고 '+best+'%';
+  }
+  $('qzSecList').innerHTML=SEC.map((s,i)=>{
+    const b=bests.sec[i];const sc=b==null?'none':b>=70?'good':'mid';
+    return`<div class="sec-item" onclick="startFlip(${i})">
+      <div class="sec-num" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)">${i+1}</div>
+      <div class="sec-info"><div class="sec-title">${s.l} · ${s.r}</div><div class="sec-range">${s.c[0].k}~${s.c[29].k} · 30문제</div></div>
+      <div class="sec-score ${sc}">${b!=null?b+'%':'—'}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── 카드 공통 ── */
+function setCardFront(badge,rad,k,hint){
+  $('cf_badge').textContent=badge;
+  $('cf_rad').textContent='부수: '+rad;
+  $('cf_k').textContent=k;
+  $('cf_hint').textContent=hint||'';
+}
+function setCardBack(k,p,m,r,o){
+  $('cb_k').textContent=k;
+  $('cb_read').textContent=p;
+  $('cb_mean').textContent=m;
+  $('cb_rad').textContent=r;
+  $('cb_orig').innerHTML=o.replace(/→/g,'<em>→</em>');
+}
+
+/* ── 초급 (그림카드) ── */
+function startLv(i, random=true){
+  cur.lv=i; cur.random1=random;
+  const base=H.slice(i*30,(i+1)*30);
+  cur.deck=random?shuf([...base]):[...base];
+  cur.idx=0;cur.known=new Set();cur.unk=new Set();
+  $('t1title').textContent=LVM[i].n+' · '+LVM[i].r;
+  $('t1sub').textContent='그림카드 · '+(random?'🔀 랜덤':'📋 순서대로');
+  show('study1');
+  renderCard1();
+}
+function renderCard1(){
+  const c=cur.deck[cur.idx];
+  // ★ 카드 즉시 리셋 (transition 없이)
+  const ci=$('ci1');
+  ci.classList.remove('anim','flipped');
+  cur.flipped1=false;
+  $('pf1').style.width=(cur.idx/cur.deck.length*100)+'%';
+  $('t1cnt').textContent=(cur.idx+1)+'/'+cur.deck.length;
+  setCardFront(LVM[cur.lv].n, c.r, c.k, c.o);
+  setCardBack(c.k, c.p, c.m, c.r, c.o);
+}
+function flip1(){
+  const ci=$('ci1');
+  ci.classList.add('anim');
+  cur.flipped1=!cur.flipped1;
+  ci.classList.toggle('flipped',cur.flipped1);
+}
+function mark1(ok){
+  const c=cur.deck[cur.idx];
+  if(ok){cur.known.add(c.k);sndOk();}else{cur.unk.add(c.k);sndNg();}
+  const nextIdx=cur.idx+1;
+  if(nextIdx>=cur.deck.length){
+    // 결과 화면
+    const pct=Math.round(cur.known.size/cur.deck.length*100);
+    if(bests.lv[cur.lv]==null||pct>bests.lv[cur.lv])bests.lv[cur.lv]=pct;
+    renderLv();
+    showResult1(pct);
+  } else {
+    cur.idx=nextIdx;
+    renderCard1();
+  }
+}
+function prev1(){
+  if(cur.idx<=0)return;
+  cur.idx--;
+  const c=cur.deck[cur.idx];
+  cur.known.delete(c.k);cur.unk.delete(c.k);
+  renderCard1();
+}
+function back1(){if(confirm('홈으로 돌아갈까요?'))goHome();}
+function showResult1(pct){
+  const wc=cur.deck.filter(c=>cur.unk.has(c.k));
+  $('r1e').textContent=pct===100?'🏆':pct>=80?'🎉':pct>=60?'😊':'💪';
+  $('r1t').textContent=pct===100?'완벽!':pct>=80?'훌륭해요!':pct>=60?'잘하고 있어요!':'다시 도전!';
+  $('r1kn').textContent=cur.known.size;
+  $('r1un').textContent=cur.unk.size;
+  $('r1pt').textContent=pct+'%';
+  if(wc.length){
+    $('ws1').style.display='block';
+    $('wc1').innerHTML=wc.map(c=>`<div class="w-chip"><div class="wck">${c.k}</div><div class="wc-m">${c.p}·${c.m}</div></div>`).join('');
+  } else {
+    $('ws1').style.display='none';
+  }
+  $('r1retry').textContent='🔄 '+LVM[cur.lv].n+' 다시 보기 ('+(cur.random1?'랜덤':'순서대로')+')';
+  $('r1retry').onclick=()=>startLv(cur.lv, cur.random1);
+  if(pct===100)setTimeout(sndFan,400);
+  show('result1');
+}
+
+/* ── 중급 (퀴즈) ── */
+function startFlip(si,rev=false){
+  cur.si=si;cur.rev=rev;
+  const base=si===-1?H:SEC[si].c;
+  cur.deck2=rev?shuf(base.filter(c=>cur.unk2&&cur.unk2.has(c.k))):shuf([...base]);
+  cur.idx2=0;cur.known2=new Set();cur.unk2=new Set();
+  cur.s2score=0;
+  $('t2title').textContent=(rev?'🔁 복습 ':(si===-1?'전체':SEC[si].l)+' 단어 퀴즈');
+  $('t2sub').textContent=cur.deck2.length+'문제 · 빈칸 채우기';
+  $('t2cnt').textContent='0점';
+  const rb=$('rvBanner');
+  if(rev){rb.classList.remove('hide');$('rvTxt').textContent='모름 카드 '+cur.deck2.length+'자 다시 풀어요!';}
+  else rb.classList.add('hide');
+  show('study2');
+  renderQ2();
+}
+function getS2Dist(correct){
+  const sameP=shuf(H.filter(x=>x.k!==correct.k&&x.p===correct.p));
+  const fc=correct.m.charAt(0);
+  const sameMF=shuf(H.filter(x=>x.k!==correct.k&&x.p!==correct.p&&x.m.charAt(0)===fc));
+  const sameR=shuf(H.filter(x=>x.k!==correct.k&&x.p!==correct.p&&x.m.charAt(0)!==fc&&x.r.charAt(0)===correct.r.charAt(0)));
+  const others=shuf(H.filter(x=>x.k!==correct.k&&x.p!==correct.p&&x.m.charAt(0)!==fc&&x.r.charAt(0)!==correct.r.charAt(0)));
+  const pool=[...sameP,...sameMF,...sameR,...others];
+  const seen=new Set([correct.k]);const res=[];
+  for(const x of pool){if(!seen.has(x.k)){seen.add(x.k);res.push(x);}if(res.length===3)break;}
+  return res;
+}
+function renderQ2(){
+  if(cur.idx2>=cur.deck2.length){
+    const pct=Math.round(cur.known2.size/cur.deck2.length*100);
+    if(cur.si>=0&&(bests.sec[cur.si]==null||pct>bests.sec[cur.si]))bests.sec[cur.si]=pct;
+    renderSec();
+    showResult2(pct);
+    return;
+  }
+  const c=cur.deck2[cur.idx2];
+  $('pf2').style.width=(cur.idx2/cur.deck2.length*100)+'%';
+  $('pf2').style.background=cur.rev?'linear-gradient(90deg,#c0392b,#e05050)':'linear-gradient(90deg,#4f46e5,#7c3aed)';
+  $('s2_qnum').textContent=(cur.idx2+1)+' / '+cur.deck2.length;
+  const wds=WORDS[c.k]||[{w:c.k+'?',r:'?',pos:0}];
+  const w1=wds[0];
+  const w2=wds[1]||null;
+  const b1=makeBlank(w1.w,w1.r,w1.pos);
+  $('s2_blank').textContent=b1.kanji;
+  $('s2_reading').textContent=b1.reading;
+  if(w2){
+    const b2=makeBlank(w2.w,w2.r,w2.pos);
+    $('s2_blank2').textContent=b2.kanji;
+    $('s2_reading2').textContent=b2.reading;
+  } else {
+    $('s2_blank2').textContent='';
+    $('s2_reading2').textContent='';
+  }
+  const choices=shuf([c,...getS2Dist(c)]);
+  $('s2choices').innerHTML=choices.map(ch=>`
+    <button class="qc" data-k="${ch.k}" onclick="s2Pick('${ch.k}')">
+      <span class="qc-main" style="font-size:22px;">${ch.k}</span>
+    </button>`).join('');
+}
+function s2Pick(sel){
+  const c=cur.deck2[cur.idx2];
+  const ok=sel===c.k;
+  document.querySelectorAll('#s2choices .qc').forEach(b=>{
+    b.disabled=true;
+    if(b.dataset.k===c.k)b.classList.add('correct');
+    else if(b.dataset.k===sel)b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  if(ok){cur.known2.add(c.k);cur.unk2.delete(c.k);cur.s2score++;sndOk();}
+  else{cur.unk2.add(c.k);cur.known2.delete(c.k);sndNg();}
+  $('t2cnt').textContent=cur.s2score+'점';
+  const wds=WORDS[c.k]||[];
+  const wordsHtml=wds.map(w=>`<div style="font-family:serif;font-size:14px;color:var(--gold);letter-spacing:2px;margin-top:3px;">${w.w} <span style="font-size:11px;color:var(--gray)">(${w.r})</span></div>`).join('');
+  const d=document.createElement('div');d.className='overlay';
+  d.innerHTML=`<div class="popup popup-l">
+    <div class="pop-i">${ok?'⭕':'❌'}</div>
+    <div class="pop-v ${ok?'ok':'ng'}">${ok?'정 답!':'오 답!'}</div>
+    <div class="pop-k">${c.k}</div>
+    <div class="pop-m">${c.p} · ${c.m}</div>
+    <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(154,123,46,.15);text-align:center;">${wordsHtml}</div>
+  </div>`;
+  document.body.appendChild(d);
+  setTimeout(()=>{d.remove();cur.idx2++;renderQ2();},ok?1400:2200);
+}
+function back2(){if(confirm('홈으로 돌아갈까요?'))goHome();}
+function startReview(){startFlip(cur.si,true);}
+function retryFlip(){startFlip(cur.si,false);}
+function showResult2(pct){
+  const wc=cur.deck2.filter(c=>cur.unk2.has(c.k));
+  $('r2e').textContent=pct===100?'🏆':pct>=80?'🎉':pct>=60?'😊':'💪';
+  $('r2t').textContent=pct===100?'완벽!':pct>=80?'훌륭해요!':pct>=60?'잘하고 있어요!':'다시 도전!';
+  $('r2s').textContent=cur.rev?'복습 완료!':'1회 학습 완료!';
+  $('r2kn').textContent=cur.known2.size;
+  $('r2un').textContent=cur.unk2.size;
+  $('r2pt').textContent=pct+'%';
+  if(wc.length){
+    $('ws2').style.display='block';
+    $('wc2').innerHTML=wc.map(c=>`<div class="w-chip"><div class="wck">${c.k}</div><div class="wc-m">${c.p}·${c.m}</div></div>`).join('');
+  } else {
+    $('ws2').style.display='none';
+  }
+  const rb=$('r2rv');
+  if(wc.length){rb.disabled=false;rb.textContent='🔁 모름 '+wc.length+'자 다시 학습';}
+  else{rb.disabled=true;rb.textContent='✅ 모름 카드 없음!';}
+  if(pct===100)setTimeout(sndFan,400);
+  show('result2');
+}
+
+/* ── 퀴즈 ── */
+function getHardDist(c){
+  const sameP=shuf(H.filter(x=>x.k!==c.k&&x.p===c.p));
+  const fc=c.m.charAt(0);
+  const sameMF=shuf(H.filter(x=>x.k!==c.k&&x.p!==c.p&&x.m.charAt(0)===fc));
+  const sameR=shuf(H.filter(x=>x.k!==c.k&&x.p!==c.p&&x.m.charAt(0)!==fc&&x.r.charAt(0)===c.r.charAt(0)));
+  const others=shuf(H.filter(x=>x.k!==c.k&&x.p!==c.p&&x.m.charAt(0)!==fc&&x.r.charAt(0)!==c.r.charAt(0)));
+  const pool=[...sameP,...sameMF,...sameR,...others];
+  const seen=new Set([c.k]);const res=[];
+  for(const x of pool){if(!seen.has(x.k)){seen.add(x.k);res.push(x);}if(res.length===3)break;}
+  return res;
+}
+function startQuiz(si,wrongOnly=false){
+  cur.qsi=si;cur.qwo=wrongOnly;
+  const base=wrongOnly?[...cur.qWL]:si===-1?[...H]:[...SEC[si].c];
+  cur.qDeck=shuf(base);
+  cur.qI=0;cur.qScore=0;cur.qOK=[];cur.qWL=[];cur.qStr=0;cur.qChi=0;
+  $('qtitle').textContent=wrongOnly?'📕 오답 복습':(si===-1?'전체 통합':SEC[si].l)+' 퀴즈';
+  $('qsub').textContent=cur.qDeck.length+'문제 · 漢字→훈음';
+  $('qscore').textContent='0점';
+  show('quiz');
+  renderQ();
+}
+function renderQ(){
+  if(cur.qI>=cur.qDeck.length){showQResult();return;}
+  const c=cur.qDeck[cur.qI];
+  $('qpf').style.width=(cur.qI/cur.qDeck.length*100)+'%';
+  $('qqnum').textContent=(cur.qI+1)+' / '+cur.qDeck.length;
+  const pos=cur.qStr%5;
+  for(let i=0;i<5;i++)$('sd'+i).classList.toggle('lit',i<pos);
+  $('qqk').textContent=c.k;
+  const choices=shuf([c,...getHardDist(c)]);
+  $('qchoices').innerHTML=choices.map(ch=>`
+    <button class="qc" data-k="${ch.k}" onclick="qPick('${ch.k}')">
+      <span class="qc-main">${ch.m}</span>
+      <span class="qc-sub">${ch.p}</span>
+    </button>`).join('');
+}
+function qPick(sel){
+  const c=cur.qDeck[cur.qI];
+  const ok=sel===c.k;
+  document.querySelectorAll('.qc').forEach(b=>{
+    b.disabled=true;
+    if(b.dataset.k===c.k)b.classList.add('correct');
+    else if(b.dataset.k===sel)b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  if(ok){cur.qScore++;cur.qOK.push(c);cur.qStr++;sndOk();
+    if(cur.qStr>0&&cur.qStr%5===0){
+      for(let i=0;i<5;i++)$('sd'+i).classList.add('lit');
+      const ch=CHEERS[cur.qChi%CHEERS.length];cur.qChi++;
+      showCheer(ch,()=>{for(let i=0;i<5;i++)$('sd'+i).classList.remove('lit');cur.qI++;$('qscore').textContent=cur.qScore+'점';renderQ();});
+      return;
+    }
+  } else {cur.qWL.push(c);cur.qStr=0;sndNg();}
+  $('qscore').textContent=cur.qScore+'점';
+  showAnsPop(ok,c);
+}
+function showAnsPop(ok,card){
+  const d=document.createElement('div');d.className='overlay';
+  d.innerHTML=`<div class="popup popup-l"><div class="pop-i">${ok?'⭕':'❌'}</div><div class="pop-v ${ok?'ok':'ng'}">${ok?'정 답!':'오 답!'}</div><div class="pop-k">${card.k}</div><div class="pop-m">${card.p} · ${card.m}</div></div>`;
+  document.body.appendChild(d);
+  setTimeout(()=>{d.remove();cur.qI++;renderQ();},ok?700:1200);
+}
+function showCheer(ch,cb){
+  const d=document.createElement('div');d.className='overlay';
+  d.innerHTML=`<div class="popup popup-d"><div class="pop-i">${ch.e}</div><div class="cheer-m">${ch.m}</div><div class="cheer-s">${ch.s}</div></div>`;
+  document.body.appendChild(d);sndFan();
+  setTimeout(()=>{d.remove();cb();},1500);
+}
+function showQResult(){
+  const tot=cur.qDeck.length,ok=cur.qOK.length,pct=Math.round(ok/tot*100);
+  if(cur.qsi>=0&&(bests.qz[cur.qsi]==null||pct>bests.qz[cur.qsi]))bests.qz[cur.qsi]=pct;
+  renderSec();
+  const rk=getRank(pct);
+  $('rankCard').className='rank-card rc-'+rk.id;
+  $('rke').textContent=rk.e;$('rkb').textContent=rk.b;$('rkn').textContent=rk.n;$('rkd').textContent=rk.d;
+  $('qrc').textContent=ok;$('qrw').textContent=cur.qWL.length;$('qrp').textContent=pct+'%';
+  if(cur.qWL.length){
+    $('qrws').style.display='block';
+    $('qrwc').innerHTML=cur.qWL.map(c=>`<div class="w-chip"><div class="wck">${c.k}</div><div class="wc-m">${c.p}·${c.m}</div></div>`).join('');
+  } else $('qrws').style.display='none';
+  const rw=$('qrRetryW');
+  if(cur.qWL.length){rw.disabled=false;rw.textContent='📕 오답 '+cur.qWL.length+'문제 다시 풀기';}
+  else{rw.disabled=true;rw.textContent='✅ 오답 없음!';}
+  const lb=cur.qsi===-1?'전체':SEC[cur.qsi].l;
+  $('qrRetry').textContent='🔄 '+lb+' 다시 풀기';
+  if(pct>=85)setTimeout(sndFan,500);
+  show('qresult');
+}
+function retryWrong(){startQuiz(cur.qsi,true);}
+function retryQuiz(){startQuiz(cur.qsi,false);}
+function backQuiz(){if(confirm('퀴즈를 종료할까요?'))goHome();}
+
+/* 초기화 */
+renderLv();
+</script>
+</body>
+</html>
